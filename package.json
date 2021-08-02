@@ -1,0 +1,16 @@
+{
+  "name": "markdown_parser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Yoshiaki Togami <tuabobo123@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack serve",
+    "build_debug": "cargo +nightly build --target wasm32-unknown-unknown && wasm-bindgen target/wasm32-unknown-unknown/debug/markdown_parser.wasm --out-dir ."
+  },
+  "devDependencies": {
+    "webpack": "^5.48.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

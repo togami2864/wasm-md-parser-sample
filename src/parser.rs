@@ -20,6 +20,7 @@ impl Parser {
             if self.end_of_line() {
                 break;
             }
+
             result.push_str(&self.parse_line())
         }
         result
@@ -28,13 +29,14 @@ impl Parser {
     fn parse_line(&mut self) -> String {
         match self.next_char() {
             '#' => self.parse_title(),
-            _ => {
+            '-' => {
                 if char::is_whitespace(self.input[self.pos + 1..].chars().next().unwrap()) {
-                    self.parse_li
+                    self.parse_list()
                 } else {
                     self.parse_text()
                 }
             }
+            _ => self.parse_text(),
         }
     }
 
@@ -46,23 +48,19 @@ impl Parser {
     }
 
     fn parse_title(&mut self) -> String {
-        let pound = self.consume_while(|c| c = '#');
+        let pound = self.consume_while(|c| c == '#');
         self.consume_whitespace();
         let text = self.parse_text();
 
         create_html_element(format!("h{}", pound.len()), text)
     }
 
-    fn parse_test(&mut self) -> String {
+    fn parse_text(&mut self) -> String {
         self.consume_while(|c| !is_newline(c))
     }
 
     fn end_of_line(&self) -> bool {
-        self.pos > self.input.len()
-    }
-
-    fn starts_with(&self, s: &str) -> bool {
-        self.input[self.pos..].starts_with(s)
+        self.pos >= self.input.len()
     }
 
     fn next_char(&self) -> char {
@@ -82,7 +80,7 @@ impl Parser {
         F: Fn(char) -> bool,
     {
         let mut result = String::new();
-        while !self.end_of_line() && cond(self.next.char()) {
+        while !self.end_of_line() && cond(self.next_char()) {
             result.push(self.consume_char())
         }
         result
@@ -98,5 +96,5 @@ fn create_html_element(tag_name: String, text: String) -> String {
 }
 
 fn is_newline(c: char) -> bool {
-    c = "\n"
+    c == '\n'
 }

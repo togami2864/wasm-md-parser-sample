@@ -1,5 +1,4 @@
-#![feature(proc_macro, wasm_custom_section, wasm_import_module)]
-
+#![feature(use_extern_macros)]
 mod parser;
 
 extern crate wasm_bindgen;
