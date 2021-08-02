@@ -3,7 +3,60 @@ struct Parser {
     input: String,
 }
 
+pub fn parse(source: String) -> String {
+    Parser {
+        pos: 0,
+        input: source,
+    }
+    .parse_lines()
+}
+
 impl Parser {
+    fn parse_lines(&mut self) -> String {
+        let mut result = String::new();
+
+        loop {
+            self.consume_whitespace();
+            if self.end_of_line() {
+                break;
+            }
+            result.push_str(&self.parse_line())
+        }
+        result
+    }
+
+    fn parse_line(&mut self) -> String {
+        match self.next_char() {
+            '#' => self.parse_title(),
+            _ => {
+                if char::is_whitespace(self.input[self.pos + 1..].chars().next().unwrap()) {
+                    self.parse_li
+                } else {
+                    self.parse_text()
+                }
+            }
+        }
+    }
+
+    fn parse_list(&mut self) -> String {
+        self.consume_char();
+        self.consume_whitespace();
+        let text = self.parse_text();
+        create_html_element("li".to_string(), text)
+    }
+
+    fn parse_title(&mut self) -> String {
+        let pound = self.consume_while(|c| c = '#');
+        self.consume_whitespace();
+        let text = self.parse_text();
+
+        create_html_element(format!("h{}", pound.len()), text)
+    }
+
+    fn parse_test(&mut self) -> String {
+        self.consume_while(|c| !is_newline(c))
+    }
+
     fn end_of_line(&self) -> bool {
         self.pos > self.input.len()
     }
